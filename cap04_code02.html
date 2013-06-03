@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Sono un punto sulla mappa</title>
+  </head>
+  <body>
+  <!-- inserisci contenuto -->
+  <script>
+  function inizializza() {
+    navigator.geolocation.getCurrentPosition(ioSonoQui, gestisciErrore, {enableHighAccuracy: false, timeout:20000, maximumAge: 25000});  
+  }
+
+  // funzione invocata a fronte di localizzazione
+  // geografica del dispositivo 
+  function ioSonoQui(position) {
+    var latitude = position.coords.latitude;
+    var longitude = position.coords.longitude;
+    
+    var url = "http://maps.googleapis.com/maps/api/staticmap?center=";
+    url += latitude + "," + longitude;
+    url += "&zoom=18&size=600x300&maptype=roadmap&markers=color:blue%7Clabel:A";
+    url += "%7C"+latitude+","+longitude+"&sensor=false";
+
+    var img = document.createElement("img");  
+    img.alt = "Via Torino, 12, Milano, MI";
+    img.src = url;
+    document.body.appendChild(img);  
+
+    // sostituisci "console.log()" con "stampa()"
+    // se vuoi mostrare il contenuto nel terminale
+    // javascript del tuo browser
+    stampa("url: <code>" + url + "</code>");
+  }
+
+  
+  // mostra all'interno di un elemento <div>
+  // il testo passato come parametro "msg".
+  function stampa(msg) {
+    var logArea = document.getElementById("logArea");
+
+    if (!logArea) {
+      logArea = document.createElement("div");
+      logArea.id = "logArea";
+    }
+    logArea.innerHTML += msg + "<br>";
+
+    document.body.appendChild(logArea);
+  } 
+
+  // un errore nel processo di identificazione
+  // delle coordinate viene gestito in questa funzione.
+  function gestisciErrore(positionError) {
+    console.log("messaggio di errore: " + positionError.message);
+    switch(positionError.code) {
+      case positionError.PERMISSION_DENIED:
+      console.log("L'utente non desidera rivelare la propria posizione");
+      break;
+    case positionError.POSITION_UNAVAILABLE:
+      console.log("Non è stato possibile rilevare le coordinate dell'utente.")
+      break;
+    case positionError.TIMEOUT:
+      console.log("E' stato impiegato più tempo di quello massimo richiesto per completare l'operazione.")
+      break;
+    } 
+  }
+  window.onload = inizializza;
+  </script>
+  </body>
+</html>

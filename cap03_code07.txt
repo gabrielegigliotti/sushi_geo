@@ -1,0 +1,1 @@
+navigator.geolocation.getCurrentPosition(ioSonoQui, gestisciErrore, {enableHighAccuracy: false, timeout:20000, maximumAge: 25000});

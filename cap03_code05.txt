@@ -1,0 +1,18 @@
+function ioSonoQui(position) {
+  var latitude = position.coords.latitude;
+  var longitude = position.coords.longitude;
+  var accuracy = position.coords.accuracy;
+  var timestamp = position.timestamp;
+  var altitude = position.coords.altitude;
+  var altitudeAccuracy = position.coords.altitudeAccuracy;
+  var heading = position.coords.heading;
+  var speed = position.coords.speed
+
+  console.log(new Date(timestamp).toLocaleDateString() + " " + new Date(timestamp).toLocaleTimeString());
+  console.log("latitudine e longitudine: " + latitude + "   " + longitude);
+  console.log("precisione (in metri) di latitudine e longitudine: " + Math.round(accuracy) + " metri");
+  console.log("altitudine (in metri): " + altitude);
+  console.log("precisione (in metri) dell'altitudine:  " + altitudeAccuracy);
+  console.log("Direzione: " + heading);
+  console.log("Velocita' (in metri/secondo): " + speed);
+}

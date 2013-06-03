@@ -1,0 +1,17 @@
+  var watchId = -1;
+  var gCounter = 0;
+
+// [omissis]
+
+   function sulleMieTracce() {
+    var options = {enableHighAccuracy: true, timeout:15000, maximumAge: 25000}
+    watchId = navigator.geolocation.watchPosition(seguimi, inErrore, options);
+  }
+
+// [omissis]
+
+  function terminaTracciamento() {
+    navigator.geolocation.clearWatch(watchId);
+}
+
+window.onload = sulleMieTracce;

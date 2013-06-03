@@ -1,0 +1,15 @@
+http://maps.googleapis.com/maps/api/staticmap?center=45.462980,9.187381&zoom=18&size=600x300&maptype=roadmap&markers=color:blue%7Clabel:A%7C45.462980,9.187381&sensor=false
+
+Le coordinate che nell'indirizzo appaiono in due punti diversi (definizione del centro della mappa e definizione del punto in cui apparirà il marker) possono essere sostituite anche da un indirizzo.
+
+Se prendiamo ad esempio l'indirizzo: 
+
+Via Torino, 18, Milano, MI 
+
+e lo codifichiamo in modo da poterlo impiegare come parte di url (web tool di codifica/decodifica realizzato da Eric Meyer disponibile qui: http://meyerweb.xcom/eric/tools/dencoder/) ottenendo così: 
+
+Via%20Torino%2C%2018%2C%20Milano%2C%20MI
+
+avremo un altro indirizzo funzionante in cui al posto delle coordinate abbiamo il relativo indirizzo.
+
+http://maps.googleapis.com/maps/api/staticmap?center=Via%20Torino%2C%2018%2C20Milano2C20MI&zoom=18&size=600x300&maptype=roadmap&markers=color:blue|label:A|Via%20Torino%2C%2018%2C%20Milano%2C%20MI&sensor=false

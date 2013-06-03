@@ -1,0 +1,18 @@
+navigator.geolocation.getCurrentPosition(ioSonoQui, gestisciErrore);
+
+// [omissis]
+
+function gestisciErrore(positionError) {
+  console.log("messaggio di errore: " + positionError.message);
+  switch(positionError.code) {
+    case positionError.PERMISSION_DENIED:
+    console.log("L'utente non desidera rivelare la propria posizione");
+    break;
+  case positionError.POSITION_UNAVAILABLE:
+    console.log("Non è stato possibile rilevare le coordinate dell'utente.")
+    break;
+  case positionError.TIMEOUT:
+    console.log("E' stato impiegato più tempo di quello massimo richiesto per completare l'operazione.")
+    break;
+  } 
+}

@@ -1,0 +1,12 @@
+// funzione invocata a fronte di localizzazione
+// geografica del dispositivo 
+function ioSonoQui(position) {
+  var latitude = position.coords.latitude;
+  var longitude = position.coords.longitude;
+  var accuracy = position.coords.accuracy;
+  var timestamp = position.timestamp;
+
+  console.log(new Date(timestamp).toLocaleDateString() + " " + new Date(timestamp).toLocaleTimeString());
+  console.log("latitudine e longitudine: " + latitude + "   " + longitude);
+  console.log("grado di approssimazione: " + Math.round(accuracy) + " metri");
+}

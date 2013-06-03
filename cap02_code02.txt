@@ -1,0 +1,10 @@
+<script src=”modernizr.js”></spript>
+<script>
+if (Modernizr.navigator) {
+  // questo browser supporta la funzionalità,
+  // è possibile tentare una lettura delle 
+  // coordinate geografiche
+} else {
+  // mancato supporto della funzionalità
+  // occorre pensare ad una strategia alternativa.
+</script>

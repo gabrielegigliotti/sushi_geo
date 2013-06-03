@@ -1,0 +1,8 @@
+navigator.geolocation.getCurrentPosition(ioSonoQui);
+
+// funzione invocata a fronte di localizzazione
+// geografica del dispositivo 
+function ioSonoQui(position) {
+  console.log("dispositivo geolocalizzato");
+  // [omissis]
+}

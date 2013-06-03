@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+      #map-canvas { height: 100% }
+    </style>
+    <title>Sono un punto sulla mappa</title>
+  </head>
+  <body>
+  <!-- inserisci contenuto -->
+  <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
+</script>
+  <script>
+  var map;
+  function inizializza() {
+    navigator.geolocation.getCurrentPosition(ioSonoQui, gestisciErrore, {enableHighAccuracy: false, timeout:20000, maximumAge: 25000});  
+  }
+
+  // funzione invocata a fronte di localizzazione
+  // geografica del dispositivo 
+  function ioSonoQui(position) {
+    var latitude = position.coords.latitude;
+    var longitude = position.coords.longitude;
+
+    var mapOptions = {
+          center: new google.maps.LatLng(latitude,longitude),
+          zoom: 19,
+          mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+
+    map = new google.maps.Map(document.getElementById("map-canvas"),
+            mapOptions);
+  }
+
+  
+  // mostra all'interno di un elemento <div>
+  // il testo passato come parametro "msg".
+  function stampa(msg) {
+    var logArea = document.getElementById("logArea");
+
+    if (!logArea) {
+      logArea = document.createElement("div");
+      logArea.id = "logArea";
+    }
+    logArea.innerHTML += msg + "<br>";
+
+    document.body.appendChild(logArea);
+  } 
+
+  // un errore nel processo di identificazione
+  // delle coordinate viene gestito in questa funzione.
+  function gestisciErrore(positionError) {
+    console.log("messaggio di errore: " + positionError.message);
+    switch(positionError.code) {
+      case positionError.PERMISSION_DENIED:
+      console.log("L'utente non desidera rivelare la propria posizione");
+      break;
+    case positionError.POSITION_UNAVAILABLE:
+      console.log("Non è stato possibile rilevare le coordinate dell'utente.");
+      break;
+    case positionError.TIMEOUT:
+      console.log("E' stato impiegato più tempo di quello massimo richiesto per completare l'operazione.");
+      break;
+    } 
+  }
+  window.onload = inizializza;
+  </script>
+  <div id="map-canvas"></div>
+  </body>
+</html>

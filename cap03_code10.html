@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>watchPosition(): un test.</title>
+    <link href='http://fonts.googleapis.com/css?family=Denk+One' rel='stylesheet' type='text/css'>
+    <style>
+    div, p { font-family: 'Denk One', sans-serif; }
+    code { font-family: monospace;}
+    </style>
+  </head>
+  <body>
+  <!-- inserisci contenuto -->
+  <script>
+  var watchID = -1;
+  var gCounter = 0;
+
+  function seguimi() {
+    watchID = navigator.geolocation.watchPosition(inMovimento, gestisciErrore, {enableHighAccuracy: true, timeout:120000, maximumAge: 15000});
+  }
+  // funzione invocata a fronte di localizzazione
+  // geografica del dispositivo 
+  function inMovimento(position) {
+    var latitude = position.coords.latitude;
+    var longitude = position.coords.longitude;
+    var accuracy = position.coords.accuracy;
+    var altitude = position.coords.altitude;
+    var altitudeAccuracy = position.coords.altitudeAccuracy;
+    var heading = position.coords.heading;
+    var speed = position.coords.speed
+    var timestamp = position.timestamp;
+    
+    // sostituisci "stampa()" con "console.log()"
+    // se vuoi mostrare il contenuto nel terminale
+    // javascript del tuo browser
+    stampa("<p><string>#" + ++gCounter + "</strong></p>");
+    stampa("<code>" + new Date(timestamp).toLocaleDateString() + " " + new Date(timestamp).toLocaleTimeString() + "</code>");
+    stampa("<code>latitudine e longitudine: " + latitude + "   " + longitude + "</code>");
+    stampa("<code>precisione (in metri) di latitudine e longitudine: " + Math.round(accuracy) + " metri" + "</code>");
+    stampa("<code>altitudine (in metri): " + altitude + "</code>");
+    stampa("<code>precisione (in metri) dell'altitudine:  " + altitudeAccuracy + "</code>");
+    stampa("<code>Direzione: " + heading + "</code>");
+    stampa("<code>Velocita' (in metri/secondo): " + speed + "</code>");
+    stampa("* * *<br>");
+  }
+
+  function bloccaTracciamento() {
+    navigator.geolocation.clearWatch(watchID);
+    console.log("tracciamento disabilitato");
+  }
+  
+  // mostra all'interno di un elemento <div>
+  // il testo passato come parametro "msg".
+  function stampa(msg) {
+    var logArea = document.getElementById("logArea");
+
+    if (!logArea) {
+      logArea = document.createElement("div");
+      logArea.id = "logArea";
+    }
+    logArea.innerHTML += msg + "<br>";
+
+    document.body.appendChild(logArea);
+  } 
+
+  // un errore nel processo di identificazione
+  // delle coordinate viene gestito in questa funzione.
+  function gestisciErrore(positionError) {
+    stampa("messaggio di errore: " + positionError.message);
+    switch(positionError.code) {
+      case positionError.PERMISSION_DENIED:
+      stampa("L'utente non desidera rivelare la propria posizione");
+      break;
+    case positionError.POSITION_UNAVAILABLE:
+      stampa("Non è stato possibile rilevare le coordinate dell'utente.")
+      break;
+    case positionError.TIMEOUT:
+      stampa("E' stato impiegato più tempo di quello massimo richiesto per completare l'operazione.")
+      break;
+    } 
+  }
+  window.onload = seguimi;
+  </script>
+  <p><a href="javascript:bloccaTracciamento()">Per bloccare la rilevazione clicca qui!</a></p>
+  </body>
+</html>

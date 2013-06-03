@@ -1,0 +1,8 @@
+<script src=”modernizr.js”></spript>
+<script>
+Modernizr.load({
+  test : Modernizr.geolocation,
+  yep  : 'normal.js',
+  nope : ['polyfill.js', 'wrapper.js']
+});
+</script>

@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Sushi - Geolocation e OpenData</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+    <style type="text/css">
+      html { height: 100% }
+      body { height: 100%; margin: 0; padding: 0 }
+      #map-canvas { height: 100% }
+    </style>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script type="text/javascript" src="http://google-maps-utility-library-v3.googlecode.com/svn/trunk/markerclusterer/src/markerclusterer.js"></script>
+    <script type="text/javascript">
+    var markers, arrayIndex;
+
+    arrayIndex = -1;
+    function loadODGMap() {
+      var dataMatrix = getDataMatrix();
+
+      var mapOptions = {
+            center: new google.maps.LatLng(45.464339, 9.791907),
+            zoom: 9,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+      var map = new google.maps.Map(document.getElementById("map-canvas"),
+            mapOptions);
+
+      var image = 'youthhostel.png';
+
+      markers = new Array(51);
+      var infowindow = new google.maps.InfoWindow();
+
+      for (var i = 0; i < dataMatrix.length; i++) {
+
+        marker = new google.maps.Marker({
+              map:map,
+              draggable:true,
+              animation: google.maps.Animation.DROP,
+              position: new google.maps.LatLng(dataMatrix[i][11], dataMatrix[i][10]),
+              icon: image,
+              title: dataMatrix[i][1]
+        }); 
+
+        markers[i] = marker;
+
+        addEventToMarker(markers[i], map, infowindow);
+      }
+      // cluster di indicatori mappa
+      var markerCluster = new MarkerClusterer(map, markers);
+
+    }
+
+
+    function addEventToMarker(marker, map ,infowindow) {
+      google.maps.event.addListener(marker, 'click', function(event) {
+        if (map.getZoom() < 12) {
+            map.setZoom(12);
+        }
+        map.setCenter(marker.getPosition());
+        var title = marker.getTitle();
+
+        if (arrayIndex != -1) {
+            markers[arrayIndex].setIcon('youthhostel.png');
+        }
+        marker.setIcon('youthhostel_clicked.png');
+          
+        var odg = lookupByTitle(title);
+        var tag_br = "<br>";
+        var infoContent = odg[1] + tag_br + odg[2] + " " + odg[4] + " " + odg[5] + tag_br;
+        infoContent += "<a href=\"http://" + odg[7] + "\">"+ odg[7] + "</a>" + tag_br + "tel: ";
+        infoContent += odg[8] + tag_br + "posti letto: " + odg[9];
+        
+        arrayIndex = odg[0]-1;
+
+        infowindow.setContent(infoContent);
+        infowindow.setPosition(event.latLng);
+        infowindow.open(map);
+ /*
+          // ID,DENOMINAZIONE,INDIRIZZO,COMUNE_PROVINCIA,CAP,PROV,FRAZIONE,SITO INTERNET,TELEFONO,NUMERO POSTI LETTO,lng,lat,location
+*/
+
+      });
+    }
+
+    // Decisamente non il modo migliore per scorrere un array
+    // alla ricerca di una stringa: http://goo.gl/Ee3sR
+    function lookupByTitle(currTitle) {
+      var matrix = getDataMatrix();
+      for (var i = 0; i < matrix.length; i++) {
+        if (currTitle == matrix[i][1]) {
+          return matrix[i];
+        }
+      }
+    }
+
+
+
+    function getDataMatrix() {
+      var odgLombardia, odgMatrix, rawData;
+
+      // ID,DENOMINAZIONE,INDIRIZZO,COMUNE_PROVINCIA,CAP,PROV,FRAZIONE,SITO INTERNET,TELEFONO,NUMERO POSTI LETTO,lng,lat,location
+      odgLombardia = new Array(51);
+      odgLombardia[0] = '1,OSTELLO CASCINA VENARA,"CASCINA VENARA, 1",ZERBOLO,27020,PV,,www.cascinavenara.it,333/1150373,20,9.022116683000091,45.210030631999999,"(45.210030631999999, 9.0221166830000907)"';
+      odgLombardia[1] = '2,OSTELLO ARTEMISTA,"VIA CASTELLO, 4",SPESSA PO,27010,PV,,www.associazioneartemista.it,0382/729919,25,9.348683968000049,45.113390939000098,"(45.113390939000098, 9.3486839680000493)"';
+      odgLombardia[2] = '3,OSTELLO CONCARENA,PIAZZA ROMA 6/8,ONO SAN PIETRO,25040,BG,,www.centroconcarena.it,0364/433038,29,10.3259773930001,46.017160748000002,"(46.017160748000002, 10.3259773930001)"';
+      odgLombardia[3] = '4,OSTELLO BORTOLINO,"VIA AL PONTE, 4",VIADANA,46019,MN,,www.ostellobortolino.it,0375/785879,19,10.524294901000101,44.922983768000101,"(44.922983768000101, 10.524294901000101)"';
+      odgLombardia[4] = '5,OSTELLO DI RONCARO,"VIA MODENA, 4",RONCARO,27010,PV,,,,16,9.27513535500009,45.229448285000103,"(45.229448285000103, 9.2751353550000903)"';
+      odgLombardia[5] = '6,OSTELLO DI VALLIO,"VIA SOPRANICO, 45/47",VALLIO TERME,25080,BS,,www.ostellovallioterme.it,0365/370851,20,10.403901642999999,45.610583168000097,"(45.610583168000097, 10.403901642999999)"';
+      odgLombardia[6] = '7,OSTELLO S. MARIA DELLE GRAZIE,"VIA MONTECASSINO, 8",MONZA,20900,MB,,,039/322890,25,9.28669584300008,45.590182102000099,"(45.590182102000099, 9.2866958430000803)"';
+      odgLombardia[7] = '8,OSTELLO ARALDI,"VIA BREDA, 7",RIVAROLO DEL RE,26036,CR,,,,17,10.484143861000099,45.043734280000102,"(45.043734280000102, 10.484143861000099)"';
+      odgLombardia[8] = '9,OSTELLO PIEVE PORTO MORONE,"VIALE CADUTI, 9",PIEVE PORTO MORONE,27017,PV,,www.comune.pieveportomorone.pv.it,0382/78024,9,9.438194622000079,45.113004821000096,"(45.113004821000096, 9.4381946220000792)"';
+      odgLombardia[9] = '10,OSTELLO CUCCAGNA,"VIA CUCCAGNA, 4",MILANO,20135,MI,,www.cuccagna.org,02/54118733,10,9.211315558000081,45.451346118000103,"(45.451346118000103, 9.2113155580000807)"';
+      odgLombardia[10] = '11,CENTRAL HOSTEL BG,"VIA ANTONIO GHISLANZONI, 30",BERGAMO,24122,BG,,www.centralhostelbg.com,035/211359,82,9.66998856500004,45.692417818000102,"(45.692417818000102, 9.6699885650000397)"';
+      odgLombardia[11] = '12,OSTELLO CA\' MATTA,"VIA MARESANA, 140",PONTERANICA,24010,BG,,www.camatta.it,035/577444,84,9.678431406000071,45.731574164999998,"(45.731574164999998, 9.6784314060000707)"';
+      odgLombardia[12] = '13,OSTELLO DEL PORTO,"VIA GIORGIO PAGLIA, 70",LOVERE,24065,BG,,http://digilander.libero.it/ostellodelporto/,035/983529,56,10.0687276610001,45.809967112000002,"(45.809967112000002, 10.0687276610001)"';
+      odgLombardia[13] = '14,OSTELLO DELLA GIOVENTU\',"VIA GALILEO FERRARIS, 4",BERGAMO,24123,BG,,www.ostellodibergamo.it,035/361724,84,9.686236634000069,45.718232124000103,"(45.718232124000103, 9.6862366340000694)"';
+      odgLombardia[14] = '15,OSTELLO DI CASSIGLIO,"VIA DEL PONTE, 1",CASSIGLIO,24010,BG,,,0345/87347,24,9.611420443000039,45.966946146000097,"(45.966946146000097, 9.6114204430000392)"';
+      odgLombardia[15] = '16,OSTELLO IL SENTIERO,"VIA DEI CASTAGNI, 14",CORNA IMAGNA,24030,BG,,www.ostelloilsentiero.it/,035/852851,24,9.535331816000051,45.826045026000102,"(45.826045026000102, 9.5353318160000509)"';
+      odgLombardia[16] = '17,OSTELLO MOLINO DI BASSO,VIA MADONNA DI LORETO,TORRE PALLAVICINA,24050,BG,,www.parcooglionord.it/ostello.asp,0363/903870,32,9.880157771000089,45.448039806000097,"(45.448039806000097, 9.8801577710000892)"';
+      odgLombardia[17] = '18,OSTELLO SULL\'ADDA,VIA AL PORTO,VILLA D\'ADDA,24030,BG,,www.ostellosulladda.com,035/773170,25,9.45649914000006,45.708859909000097,"(45.708859909000097, 9.4564991400000604)"';
+      odgLombardia[18] = '19,ANGOLO DA SCOPRIRE,"VIA PIETRALUNGA, 11",ANGOLO TERME,25040,BS,,www.angolodascoprire.it,348/9895189,22,10.1423107520001,45.874716662000097,"(45.874716662000097, 10.1423107520001)"';
+      odgLombardia[19] = '20,CASA DEL PARCO DELL\'ADAMELLO,"VIA NAZIONALE, 132",VEZZA D\'OGLIO,25059,BS,,www.alternativaambiente.com/ostello__casa_del_parco.html,0364/76165,29,10.4063244820001,46.2411338040001,"(46.2411338040001, 10.4063244820001)"';
+      odgLombardia[20] = '21,OSTELLO CASA DEL PARCO,VIA ROMA,CEVO,25040,BS,,www.essetiesse-srl.eu/Ostello.html,0364/634167,37,10.370443168000101,46.0796681140001,"(46.0796681140001, 10.370443168000101)"';
+      odgLombardia[21] = '22,OSTELLO CASTHELLO,"VIA MOLINI, 5",BRENO,25043,BS,,www.ostellodivallecamonica.com,0364/327992,60,10.324023673999999,45.940189200000098,"(45.940189200000098, 10.324023673999999)"';
+      odgLombardia[22] = '23,OSTELLO DEL PITTORE,"VIA BERTOLOTTI, 11",PASPARDO,25050,BS,,www.ostellodelpittore.it,0364/48372,20,10.371120565000099,46.0290070550001,"(46.0290070550001, 10.371120565000099)"';
+      odgLombardia[23] = '24,OSTELLO DELLA GIOVENTU\',"VIA GUGLIELMO MARCONI, 28",CIMBERGO,25050,BS,,www.consorziocastagna.it/index.php?option=com_content&view=article&id=66&Itemid=67,0364/486010,60,10.363817696000099,46.022706968000101,"(46.022706968000101, 10.363817696000099)"';
+      odgLombardia[24] = '25,OSTELLO VILLA OLMO,"VIA BELLINZONA, 2",COMO,22100,CO,,,031/573800,70,9.063756455000091,45.8182935950001,"(45.8182935950001, 9.0637564550000906)"';
+      odgLombardia[25] = '26,PARCO REGIONALE SPINA VERDE,VIA SANTI BRIGIDA E RESPAU\',COMO,22100,CO,,www.cascinarespau.it,031/522704,37,9.08510896500008,45.790784686000102,"(45.790784686000102, 9.0851089650000798)"';
+      odgLombardia[26] = '27,L\'ARCHETTO,"VIA BRESCIA, 9",CREMONA,26100,CR,,www.ostellocremona.it/it/,0372/080281,27,10.0316357390001,45.137802927000102,"(45.137802927000102, 10.0316357390001)"';
+      odgLombardia[27] = '28,PARROCCHIA SS. PIETRO E PAOLO,"VIALE CHIESA, 3",MOTTA BALUFFI,26045,CR,SOLAROLO MONASTEROLO,www.ostellolacanonica.it,0375/969013,24,10.2325113260001,45.057784699000102,"(45.057784699000102, 10.2325113260001)"';
+      odgLombardia[28] = '29,LA SOSTA SOLIDALE,"VIA URBINO, 9",MILANO,20161,MI,,www.lasostasolidale.comunitaefamiglia.org,02/43126774,9,9.170031124000049,45.529766039000002,"(45.529766039000002, 9.1700311240000492)"';
+      odgLombardia[29] = '30,OSTELLO AIG PIERO ROTTA,"VIA MARTINO BASSI, 2",MILANO,20148,MI,,www.hostelmilan.org,02/39267095,35,9.140261879000089,45.483638798000101,"(45.483638798000101, 9.1402618790000894)"';
+      odgLombardia[30] = '31,OSTELLO BELLO,VIA MEDICI,MILANO,20123,MI,,www.ostellobello.com,02/36582720,48,9.181494407000059,45.460497379000103,"(45.460497379000103, 9.1814944070000593)"';
+      odgLombardia[31] = '32,OSTELLO LA CORDATA,"VIA MARCO BURIGOZZO, 11",MILANO,20122,MI,,www.ostellimilano.it,02/58314675,59,9.18462582600006,45.453531909000098,"(45.453531909000098, 9.1846258260000599)"';
+      odgLombardia[32] = '33,OSTELLO OLINDA,"VIA IPPOCRATE, 45",MILANO,20161,MI,,www.olinda.org/ostello-hostel/ostello-hostel,02/91701718,11,9.16377850300006,45.522701953000102,"(45.522701953000102, 9.16377850300006)"';
+      odgLombardia[33] = '34,THE MONASTERY HOSTEL RESORT,"VIA RENZO BERTONI, 3",MILANO,20121,MI,,www.themonasteryhostel.it/,02/65560201,20,9.19171014500006,45.475474445000103,"(45.475474445000103, 9.1917101450000605)"';
+      odgLombardia[34] = '35,ZEBRA HOSTEL,"VIALE REGINA MARGHERITA, 9",MILANO,20122,MI,,www.zebrahostel.it,02/36705185,25,9.204897623000081,45.458171446000101,"(45.458171446000101, 9.2048976230000807)"';
+      odgLombardia[35] = '36,MATILDELAND,"VIA TRENTO, 4",SAN BENEDETTO PO,46027,MN,,www.matildeland.com,340/4213483,56,10.928249583000101,45.043556600000102,"(45.043556600000102, 10.928249583000101)"';
+      odgLombardia[36] = '37,OSTELLO DEL MINCIO,"VIA PORTO, 23/25",RODIGO,46040,MN,RIVALTA SUL MINCIO,www.ostellodelmincio.org,0376/653924,18,10.681438872000101,45.178734142000103,"(45.178734142000103, 10.681438872000101)"';
+      odgLombardia[37] = '38,OSTELLO DELLA GIOVENTU\' ADOLESCERE,"VIALE DELLA REPUBBLICA, 25",VOGHERA,27058,PV,,,0383/343011,13,9.00851622800008,44.986382008000099,"(44.986382008000099, 9.0085162280000795)"';
+      odgLombardia[38] = '39,OSTELLO S.MARIA IN BETLEM,"VIA PASINO DEGLI EUSTACHI, 7",PAVIA,27100,PV,,www.ostellosantamariainbetlem.com,331/3046459,22,9.15098641700007,45.177585190000102,"(45.177585190000102, 9.1509864170000697)"';
+      odgLombardia[39] = '40,OSTELLO AL DESERTO,"VIA AL DESERTO, 2",CHIAVENNA,23022,SO,,www.nisida.coop/deserto.html,0343/48057,34,9.39753592700009,46.3232441090001,"(46.3232441090001, 9.3975359270000904)"';
+      odgLombardia[40] = '41,OSTELLO WHITE FOX,"VIA REGINA PIRINOLI, 5",BESOZZO,21023,VA,,,0332/770100,8,8.66659733800009,45.8484203800001,"(45.8484203800001, 8.6665973380000896)"';
+      odgLombardia[41] = '42,UNIVERSITA\' DELLA VELA,"VIA SAN MARCO, 17",TREMOSINE,25010,BS,,www.campioneunivela.it,0365/791102,16,10.7455860160001,45.760517934000099,"(45.760517934000099, 10.7455860160001)"';
+      odgLombardia[42] = '43,OSTELLO ORIZZONTI VERDI,"VIA ARGINELLO FOGGIA, 16/17",DOSOLO,46030,MN,VILLASTRADA,,0375/838098,18,10.6398476960001,44.980282305000102,"(44.980282305000102, 10.6398476960001)"';
+      odgLombardia[43] = '44,OSTELLO DELLA GIOVENTU\' CASA CORTI,VIA CASA CORTI,VALBONDIONE,24020,BG,,www.ostellovalbondione.com/,0346/44654,48,10.002490574000101,46.031288239000098,"(46.031288239000098, 10.002490574000101)"';
+      odgLombardia[44] = '45,OSTELLO DELLE TRE CORONE,"VIA GIUSEPPE MAZZINI, 28",TRESCORE BALNEARIO,24069,BG,,www.ostellodelletrecorone.it,035/9491633,48,9.845864492000089,45.691187269000103,"(45.691187269000103, 9.8458644920000893)"';
+      odgLombardia[45] = '46,OSTELLO LA PRIMULA,"VIA IV NOVEMBRE, 106",MENAGGIO,22017,CO,,www.menaggiohostel.com,0344/32356,55,9.23655230600008,46.013816493,"(46.013816493, 9.23655230600008)"';
+      odgLombardia[46] = '47,MOLINATTO 2000 S.r.l.,STRADA PRIVATA DEL MOLINATTO,OGGIONO,23848,LC,,www.residenzamolinatto.it,0341/261020,13,9.361895523000049,45.802191165000103,"(45.802191165000103, 9.3618955230000491)"';
+      odgLombardia[47] = '48,LA PENICINA,STRADA STATALE 412,ROMAGNESE,27050,PV,,,0383/343021,25,9.32819828900006,44.837003729000102,"(44.837003729000102, 9.3281982890000599)"';
+      odgLombardia[48] = '49,NEW MOON RESORT,"VIA GIOVANNI CALVINO, 11",MILANO,20154,MI,,www.newmoonresort.it,02/34691135,80,9.171340081000039,45.490440889000098,"(45.490440889000098, 9.1713400810000394)"';
+      odgLombardia[49] = '50,OSTELLO DI BORGHETTO,"FRAZIONE FORNACI, 27 A",BORGHETTO LODIGIANO,26812,LO,,www.ostellodiborghetto.com,0371/89226,24,9.518470093000079,45.194275354000098,"(45.194275354000098, 9.5184700930000794)"';
+      odgLombardia[50] = '51,IL SEICENTO,"VIA ROMA, 2/A",SERNIO,23030,SO,,www.ilseicento.com,350/5001004,24,10.2053740000001,46.223889400000097,"(46.223889400000097, 10.2053740000001)"';
+
+      // Creo una matrice in cui 
+      // la riga rappresenta un ostello della gioventù
+      // ogni ostello è caratterizzato da 13 proprietà
+      odgMatrix = new Array(51);
+      for (var i = 0; i < odgLombardia.length; i++) {
+         // Ripulisco dalle virgole in eccesso 
+         // i dati relativi a ciascun ostello.
+         rawData = sanitize(odgLombardia[i]);
+         
+         // creo un array di proprieta dell'ostello
+         // le proprietà sono 13 e sono indicate 
+         // in cima a questo file.
+         odgMatrix[i] = rawData.split(",");
+      }
+      return odgMatrix;
+    }
+
+    // rimuovo doppi apici e le virgole ivi contenute
+    // è la prima volta che scrivo "ivi" in un commento. :)
+    function sanitize(currOdg) {
+      var sanitized, doubleQuotes;
+
+      sanitized = "";
+      doubleQuotes = false;  
+
+      for(var i = 0; i < currOdg.length; ++i) {
+        if (currOdg.charAt(i) == '"') {
+          doubleQuotes = !doubleQuotes;
+          sanitized += '';
+          continue;
+        }
+        if (currOdg.charAt(i) ==',' && doubleQuotes)
+          sanitized += ' ';
+        else
+          sanitized += currOdg.charAt(i);
+      }
+      return sanitized;
+    } 
+
+    //google.maps.event.addDomListener(window, 'load', initialize);
+    window.onload = loadODGMap;
+    </script>
+  </head>
+  <body>
+    <div id="map-canvas"/>
+  </body>
+</html>

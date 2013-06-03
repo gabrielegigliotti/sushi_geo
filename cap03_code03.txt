@@ -1,0 +1,10 @@
+// funzione invocata a fronte di localizzazione
+// geografica del dispositivo 
+function ioSonoQui(position) {
+  var latitude = position.coords.latitude;
+  var longitude = position.coords.longitude;
+  var timestamp = position.timestamp;
+  
+  console.log("timestamp: " + timestamp);
+  console.log("latitudine e longitudine: " + latitude + "   " + longitude);
+}
