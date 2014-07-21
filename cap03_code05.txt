@@ -6,7 +6,7 @@ function ioSonoQui(position) {
   var altitude = position.coords.altitude;
   var altitudeAccuracy = position.coords.altitudeAccuracy;
   var heading = position.coords.heading;
-  var speed = position.coords.speed
+  var speed = position.coords.speed;
 
   console.log(new Date(timestamp).toLocaleDateString() + " " + new Date(timestamp).toLocaleTimeString());
   console.log("latitudine e longitudine: " + latitude + "   " + longitude);

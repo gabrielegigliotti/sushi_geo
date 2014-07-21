@@ -1,72 +1,78 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta charset="utf-8">
     <title>getCurrentPosition(): un test.</title>
-    <link href='http://fonts.googleapis.com/css?family=Denk+One' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Denk+One'
+          rel='stylesheet' type='text/css'>
     <style>
-    p { font-family: 'Denk One', sans-serif; }
-    .logArea {font-family: monospace;}
+        p {
+            font-family: 'Denk One', sans-serif;
+        }
+
+        .logArea {
+            font-family: monospace;
+        }
     </style>
-  </head>
-  <body>
-  <!-- inserisci contenuto -->
-  <p>Risultati della rilevazione!</p>
-  <script>
-  navigator.geolocation.getCurrentPosition(ioSonoQui, gestisciErrore, {enableHighAccuracy: true, timeout:120000, maximumAge: 15000});
+</head>
+<body>
+<!-- inserisci contenuto -->
+<p>Risultati della rilevazione!</p>
+<script>
+    navigator.geolocation.getCurrentPosition(ioSonoQui, gestisciErrore, {enableHighAccuracy: true, timeout: 120000, maximumAge: 15000});
 
-  // funzione invocata a fronte di localizzazione
-  // geografica del dispositivo 
- function ioSonoQui(position) {
-  var latitude = position.coords.latitude;
-  var longitude = position.coords.longitude;
-  var accuracy = position.coords.accuracy;
-  var timestamp = position.timestamp;
-  var altitude = position.coords.altitude;
-  var altitudeAccuracy = position.coords.altitudeAccuracy;
-  var heading = position.coords.heading;
-  var speed = position.coords.speed
+    // funzione invocata a fronte di localizzazione
+    // geografica del dispositivo
+    function ioSonoQui(position) {
+        var latitude = position.coords.latitude;
+        var longitude = position.coords.longitude;
+        var accuracy = position.coords.accuracy;
+        var timestamp = position.timestamp;
+        var altitude = position.coords.altitude;
+        var altitudeAccuracy = position.coords.altitudeAccuracy;
+        var heading = position.coords.heading;
+        var speed = position.coords.speed;
 
-  stampa(new Date(timestamp).toLocaleDateString() + " " + new Date(timestamp).toLocaleTimeString());
-  stampa("latitudine e longitudine: " + latitude + "   " + longitude);
-  stampa("precisione (in metri) di latitudine e longitudine: " + Math.round(accuracy) + " metri");
-  stampa("altitudine (in metri): " + altitude);
-  stampa("precisione (in metri) dell'altitudine:  " + altitudeAccuracy);
-  stampa("Direzione: " + heading);
-  stampa("Velocita' (in metri/secondo): " + speed);
-}
-
-  // mostra all'interno di un elemento <div>
-  // il testo passato come parametro "msg".
-  function stampa(msg) {
-    var logArea = document.getElementById("logArea");
-
-    if (!logArea) {
-      logArea = document.createElement("div");
-      logArea.id = "logArea";
+        stampa(new Date(timestamp).toLocaleDateString() + " " + new Date(timestamp).toLocaleTimeString());
+        stampa("latitudine e longitudine: " + latitude + "   " + longitude);
+        stampa("precisione (in metri) di latitudine e longitudine: " + Math.round(accuracy) + " metri");
+        stampa("altitudine (in metri): " + altitude);
+        stampa("precisione (in metri) dell'altitudine:  " + altitudeAccuracy);
+        stampa("Direzione: " + heading);
+        stampa("Velocita' (in metri/secondo): " + speed);
     }
-    logArea.innerHTML += msg + "<br>";
 
-    document.body.appendChild(logArea);
-  } 
+    // mostra all'interno di un elemento <div>
+    // il testo passato come parametro "msg".
+    function stampa(msg) {
+        var logArea = document.getElementById("logArea");
 
-  // un errore nel processo di identificazione
-  // delle coordinate viene gestito in questa funzione.
-  function gestisciErrore(positionError) {
-    console.log("messaggio di errore: " + positionError.message);
-    switch(positionError.code) {
-      case positionError.PERMISSION_DENIED:
-      console.log("L'utente non desidera rivelare la propria posizione");
-      break;
-    case positionError.POSITION_UNAVAILABLE:
-      console.log("Non è stato possibile rilevare le coordinate dell'utente.")
-      break;
-    case positionError.TIMEOUT:
-      console.log("E' stato impiegato più tempo di quello massimo richiesto per completare l'operazione.")
-      break;
-    } 
-  }
-  </script>
+        if (!logArea) {
+            logArea = document.createElement("div");
+            logArea.id = "logArea";
+        }
+        logArea.innerHTML += msg + "<br>";
 
-  </body>
+        document.body.appendChild(logArea);
+    }
+
+    // un errore nel processo di identificazione
+    // delle coordinate viene gestito in questa funzione.
+    function gestisciErrore(positionError) {
+        console.log("messaggio di errore: " + positionError.message);
+        switch (positionError.code) {
+            case positionError.PERMISSION_DENIED:
+                console.log("L'utente non desidera rivelare la propria posizione");
+                break;
+            case positionError.POSITION_UNAVAILABLE:
+                console.log("Non è stato possibile rilevare le coordinate dell'utente.")
+                break;
+            case positionError.TIMEOUT:
+                console.log("E' stato impiegato più tempo di quello massimo richiesto per completare l'operazione.")
+                break;
+        }
+    }
+</script>
+
+</body>
 </html>
